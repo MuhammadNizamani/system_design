@@ -11,5 +11,8 @@ server.config["MYSQL_DB"] = os.environ.get("MYSQL_DB")
 server.config["MYSQL_PORT"] = os.environ.get("MYSQL_PORT") 
 
 
-
-print(server.config["MY_SQL"])
+@server.route("/login", methods =['POST'])
+def login ():
+    auth = Request.authorization
+    if not auth:
+        return "missing credentails", 401
