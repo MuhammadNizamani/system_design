@@ -25,4 +25,20 @@ def login ():
         if auth.username != email or auth.password != password:
             return "Invalid credentails", 401
         else:
-            return createJWT(auth.username, os.environ.get("JWT_SECRET"))
+            return createJWT(auth.username, os.environ.get("JWT_SECRET"), True)
+    else:
+        return "Invalid credentails", 401
+    
+
+def createJWT(username, secret, authz):
+    return jwt.encode({"username": username,
+                       "exp": datetime.datetime.now(tz=datetime.timezone.utc)+ datetime.timedelta(days=1),
+                       "iat":datetime.datetime.utcnow(),
+                       "admin": authz},
+                       secret,
+                       algorithm= "HS256",
+        )
+
+if __name__ == "__main__":
+    
+    server.run(host="0.0.0.0", port="5000")
