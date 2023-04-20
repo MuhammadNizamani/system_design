@@ -1,5 +1,5 @@
 import jwt, datetime, os
-from flask import Flask, Request
+from flask import Flask, request
 from flask_mysqldb import MySQL
 
 server = Flask(__name__)
@@ -13,7 +13,7 @@ server.config["MYSQL_PORT"] = os.environ.get("MYSQL_PORT")
 
 @server.route("/login", methods =['POST'])
 def login ():
-    auth = Request.authorization
+    auth = request.authorization
     if not auth:
         return "missing credentails", 401
     cur = mysql.connection.cursor()
@@ -29,6 +29,21 @@ def login ():
     else:
         return "Invalid credentails", 401
     
+@server.route("/validate", methods=['POST'])
+def validate():
+    encoded_jwt = request.headers(['Authorization'])
+    if not encoded_jwt:
+        return "missing credentails", 401
+    encoded_jwt= encoded_jwt.split(" ")[1]
+    try:
+        decoded = jwt.decode(
+            encoded_jwt,os.environ.get("JWT_SECRET"), algorithm =["HS256"]
+        )
+    except:
+        return "Not authorize", 403
+    
+    return decoded , 200
+
 
 def createJWT(username, secret, authz):
     return jwt.encode({"username": username,
