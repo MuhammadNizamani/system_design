@@ -4,29 +4,27 @@ metadata:
   name: auth
   labels:
     app: auth
-
 spec:
   replicas: 2
-  selector: 
-    matchLables:
+  selector:
+    matchLabels:
       app: auth
-    strategy:
-      type: RollingUpdate
-      rollingupdate:
-        maxSurge: 3
-    template: 
-      metadata:
-        labels:
-          app: auth
-      spec: containers
-        -name: auth
-        image: ishaquenizamani/auth
-        ports:
-          - containerPort: 5000
-        envFrom:
-          - configMapRef:
-            name: auth-configmap
-          - secretRef:
-            name: auth-secret
-
-
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: sweasytech/auth
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: auth-configmap
+            - secretRef:
+                name: auth-secret
